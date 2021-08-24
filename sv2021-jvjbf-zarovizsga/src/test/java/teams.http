@@ -1,0 +1,37 @@
+PUT http://localhost:8080/api/teams/1/players
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+
+###
+
+POST http://localhost:8080/api/teams/1/players
+Content-Type: application/json
+
+{
+  "name": "Király Gábor",
+  "dateOfBirth": "1990.10.10",
+  "position": "GOALKEEPER"
+}
+
+###
+
+POST http://localhost:8080/api/teams
+Content-Type: application/json
+
+{
+  "name": "PSG"
+}
+
+###
+
+GET http://localhost:8080/api/teams/1
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/teams
+Accept: application/json

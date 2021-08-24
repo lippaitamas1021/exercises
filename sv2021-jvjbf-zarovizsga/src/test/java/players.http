@@ -1,0 +1,28 @@
+DELETE http://localhost:8080/api/players/2
+
+###
+
+POST http://localhost:8080/api/players
+Content-Type: application/json
+
+{
+  "name": "Szalai Ádám",
+  "dateOfBirth": "1990.11.11",
+  "position": "STRIKER"
+}
+
+###
+
+POST http://localhost:8080/api/players
+Content-Type: application/json
+
+{
+  "name": "Sallai Viktor",
+  "dateOfBirth": "1995.12.12",
+  "position": "RIGHT_WINGER"
+}
+
+###
+
+GET http://localhost:8080/api/players
+Accept: application/json
