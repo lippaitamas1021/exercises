@@ -1,0 +1,44 @@
+PUT http://localhost:8080/api/owners/1/dogs
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+###
+
+POST http://localhost:8080/api/owners/1/dogs
+Content-Type: application/json
+
+{
+  "name": "Lili",
+  "breed": "mopps",
+  "age": 2
+}
+
+###
+
+POST http://localhost:8080/api/owners
+Content-Type: application/json
+
+{
+  "name": "Nagy Annamária"
+}
+
+###
+
+GET http://localhost:8080/api/owners/1
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/owners
+Accept: application/json
+
+###
+
+DELETE http://localhost:8080/api/owners
+
+###
+
+DELETE http://localhost:8080/api/owners/1

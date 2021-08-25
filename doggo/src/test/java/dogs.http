@@ -1,0 +1,33 @@
+POST http://localhost:8080/api/dogs
+Content-Type: application/json
+
+{
+  "name": "Ronnie",
+  "breed": "bullDog",
+  "age": 3
+}
+
+###
+
+POST http://localhost:8080/api/dogs
+Content-Type: application/json
+
+{
+  "name": "Rex",
+  "breed": "mopps",
+  "age": 2
+}
+
+###
+
+GET http://localhost:8080/api/dogs
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/dogs/2
+Accept: application/json
+
+###
+
+DELETE http://localhost:8080/api/dogs/2
