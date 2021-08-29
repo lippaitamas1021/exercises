@@ -17,4 +17,7 @@ public class UpdateMovieCommand {
     private String director;
 
     @NotBlank(message = "Studio of the movie must be completed")
-    private String studio;}
+    private String studio;
+
+    public UpdateMovieCommand(String title) {
+        this.title = title;}}

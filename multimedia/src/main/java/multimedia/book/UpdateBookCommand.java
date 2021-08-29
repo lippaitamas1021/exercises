@@ -12,14 +12,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UpdateBookCommand {
 
-    @NotNull
     private int id;
 
-    @NotBlank(message = "Author of the book must be completed")
     private String author;
 
     @NotBlank(message = "Title of the book must be completed")
     private String title;
 
-    @NotNull
-    private LocalDate date;}
+    private LocalDate date;
+
+    public UpdateBookCommand(String title) {
+        this.title = title;}}

@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateWithExistingDogCommand {
 
-    private int id;
-}
+    private int id;}

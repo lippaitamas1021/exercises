@@ -16,5 +16,4 @@ public class BookDTO {
 
     private String title;
 
-    private LocalDate date;
-}
+    private LocalDate date;}

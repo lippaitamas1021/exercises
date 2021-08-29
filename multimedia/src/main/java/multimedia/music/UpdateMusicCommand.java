@@ -17,4 +17,7 @@ public class UpdateMusicCommand {
     private String title;
 
     @NotBlank(message = "Genre of the music must be completed")
-    private String genre;}
+    private String genre;
+
+    public UpdateMusicCommand(String title) {
+        this.title = title;}}
