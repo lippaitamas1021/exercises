@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import therapies.NotFoundException;
 import therapies.participant.Participant;
 import therapies.participant.ParticipantRepository;
-import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -50,7 +50,16 @@ public class TherapyService {
 
 
     @Transactional
-    public TherapyDto addParticipantToTheTherapy(int id, AddParticipantCommand command) {
+    public TherapyDto addNewParticipantToExistingTherapy(int id, AddNewParticipantCommand command) {
+        Therapy therapy = findT(id);
+        Participant participant = new Participant(command.getName());
+        therapy.addParticipant(participant);
+        participant.setTherapy(therapy);
+        return modelMapper.map(therapy, TherapyDto.class);}
+
+
+    @Transactional
+    public TherapyDto addExistingParticipantToExistingTherapy(int id, AddExistingParticipantCommand command) {
         Therapy therapy = findT(id);
         Participant participant = findP(command.getId());
         therapy.addParticipant(participant);

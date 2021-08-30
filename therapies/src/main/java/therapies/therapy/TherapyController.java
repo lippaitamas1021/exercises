@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/therapy")
+@RequestMapping("/api/therapies")
 @Tag(name = "Operations on therapies")
 @AllArgsConstructor
 public class TherapyController {
@@ -43,9 +43,9 @@ public class TherapyController {
 
     @PostMapping("/{id}/participants")
     @Tag(name = "POST")
-    @Operation(summary = "Adding a participant", description = "This option is for adding a new participant to the therapy")
-    public TherapyDto addParticipantToTheTherapy(@PathVariable("id") int id, AddParticipantCommand command) {
-        return therapyService.addParticipantToTheTherapy(id, command);}
+    @Operation(summary = "Adding a new participant", description = "This option is for adding a new participant to the existing therapy")
+    public TherapyDto addNewParticipantToExistingTherapy(@PathVariable("id") int id, AddNewParticipantCommand command) {
+        return therapyService.addNewParticipantToExistingTherapy(id, command);}
 
 
     @PutMapping("/{id}")
@@ -55,6 +55,13 @@ public class TherapyController {
     @ApiResponse(responseCode = "400", description = "Therapy update is not allowed")
     public TherapyDto updateTherapy(@PathVariable("id") int id, @Valid @RequestBody UpdateTherapyCommand command) {
         return therapyService.updateTherapy(id, command);}
+
+
+    @PutMapping("/{id}/participants")
+    @Tag(name = "PUT")
+    @Operation(summary = "Adding an existing participant", description = "This option is for adding an existing participant to an existing therapy")
+    public TherapyDto addExistingParticipantToExistingTherapy(@PathVariable("id") int id, @Valid @RequestBody AddExistingParticipantCommand command) {
+        return therapyService.addExistingParticipantToExistingTherapy(id, command);}
 
 
     @DeleteMapping("/{id}")
