@@ -2,10 +2,8 @@ package doggo.owners;
 
 import doggo.dog.AddNewDogCommand;
 import doggo.dog.CreateDogCommand;
-import doggo.dog.DogDTO;
 import doggo.owner.CreateOwnerCommand;
 import doggo.owner.OwnerDTO;
-import doggo.owner.UpdateWithExistingDogCommand;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,35 +53,18 @@ public class OwnerControllerRestIT {
 
     @Test
     void testAddNewDogToExistingOwner(){
-        OwnerDTO owner =
-                template.postForObject("/api/owners",
-                        new CreateOwnerCommand("Mila Kunis"),
-                        OwnerDTO.class);
-        OwnerDTO ownerWithDog = template.postForObject("/api/owners/{id}/dogs",
-                new AddNewDogCommand("Lili", "Mopps", 2, "Frisby"), OwnerDTO.class, owner.getId());
-        assertThat(ownerWithDog.getDogs()).extracting(DogDTO::getName)
-                .contains("Lili");}
-
-
-    @Test
-    void testAddExistingDogWithOwner(){
-        OwnerDTO owner =
-                template.postForObject("/api/owners",
-                        new CreateOwnerCommand("Margot Robbie"),
-                        OwnerDTO.class);
-        DogDTO dog =
-                template.postForObject("/api/dogs",
-                        new CreateDogCommand("Lili","Mopps", 2, "Ball"),
-                        DogDTO.class);
-        template.put("/api/owners/{id}/dogs", new UpdateWithExistingDogCommand(dog.getId()), owner.getId());
+        OwnerDTO owner = template.postForObject("/api/owners",
+                new CreateOwnerCommand("Margot Robbie"),
+                OwnerDTO.class);
+        template.postForObject("/api/owners/{id}/dogs", new AddNewDogCommand("Alex", "Yorkie", 4, "Ball"),
+                OwnerDTO.class, owner.getId());
         List<OwnerDTO> result = template.exchange(
                 "/api/owners",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<OwnerDTO>>() {}).getBody();
+                new ParameterizedTypeReference<List<OwnerDTO>>(){}).getBody();
         assert result != null;
-        assertThat(result.get(0).getDogs()).extracting(DogDTO::getName)
-                .contains("Lili");}
+        assertEquals(1, result.stream().map(OwnerDTO::getDogs).count());}
 
 
     @Test
@@ -103,4 +84,32 @@ public class OwnerControllerRestIT {
                 template.postForObject("/api/owners",
                         new CreateOwnerCommand(""),
                         Problem.class);
-        assertEquals(Status.BAD_REQUEST,result.getStatus());}}
+        assertEquals(Status.BAD_REQUEST,result.getStatus());}
+
+
+    @Test
+    void deleteOwnerById(){
+        OwnerDTO ownerOne = template.postForObject("/api/owners",
+                new CreateOwnerCommand("Mila Kunis"), OwnerDTO.class);
+        OwnerDTO ownerTwo = template.postForObject("/api/owners",
+                new CreateOwnerCommand("Margot Robbie"), OwnerDTO.class);
+        template.delete("/api/owners/{id}", ownerOne.getId());
+        List<OwnerDTO> owners = template.exchange(
+                "/api/owners",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<OwnerDTO>>(){}).getBody();
+        assertThat(owners).containsExactly(ownerTwo);}
+
+
+    @Test
+    void deleteOwners(){
+        template.postForObject("/api/owners", new CreateOwnerCommand("Mila Kunis"), OwnerDTO.class);
+        template.postForObject("/api/owners", new CreateOwnerCommand("Margot Robbie"), OwnerDTO.class);
+        template.delete("/api/owners");
+        List<OwnerDTO> owners = template.exchange(
+                "/api/owners",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<OwnerDTO>>(){}).getBody();
+        assertThat(owners).isEmpty();}}
