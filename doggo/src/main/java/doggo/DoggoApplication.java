@@ -13,12 +13,12 @@ public class DoggoApplication {
         SpringApplication.run(DoggoApplication.class, args);
     }
 
+
     @Bean
-    public ModelMapper modelMapper() {return new ModelMapper();
-    }
+    public ModelMapper modelMapper() {return new ModelMapper();}
+
 
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper().findAndRegisterModules();
-    }
-}
+    }}

@@ -1,9 +1,7 @@
 package doggo.owner;
 
 import doggo.NotFoundException;
-import doggo.dog.CreateDogCommand;
-import doggo.dog.Dog;
-import doggo.dog.DogRepository;
+import doggo.dog.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -23,50 +21,59 @@ public class OwnerService {
 
     private ModelMapper modelMapper;
 
+
     public List<OwnerDTO> listOwners(Optional<String> name) {
-        Type targetListType = new TypeToken<List<OwnerDTO>>() {
-        }.getType();
-        return modelMapper.map(ownerRepository.findAll(), targetListType);
-    }
+        Type targetListType = new TypeToken<List<OwnerDTO>>() {}.getType();
+        return modelMapper.map(ownerRepository.findAll(), targetListType);}
+
 
     public OwnerDTO findOwnerById(int id) {
-        Owner owner = ownerRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
-        return modelMapper.map(owner, OwnerDTO.class);
-    }
+        return modelMapper.map(findOwner(id), OwnerDTO.class);}
 
-    public OwnerDTO createOwner(CreateOwnerCommand command) {
+
+    public Owner findOwner(int id) {
+        return ownerRepository.findById(id).orElseThrow(() -> new NotFoundException(id, "Owner"));}
+
+
+    public OwnerDTO saveOwner(CreateOwnerCommand command) {
         Owner owner = new Owner(command.getName());
-        ownerRepository.save(owner);
-        return modelMapper.map(owner, OwnerDTO.class);
-    }
+        Owner result = ownerRepository.save(owner);
+        return modelMapper.map(result, OwnerDTO.class);}
+
 
     @Transactional
-    public OwnerDTO addNewDogToOwner(int id, CreateDogCommand command) {
-        Owner owner = ownerRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
-        Dog dog = new Dog(command.getName(), command.getBreed(), command.getAge());
+    public OwnerDTO addNewDogToExistingOwner(int id, AddNewDogCommand command) {
+        Owner owner = findOwner(id);
+        Dog dog = new Dog(command.getName(), command.getBreed(), command.getAge(), command.getFavToy());
         owner.addDog(dog);
         dog.setOwner(owner);
-        return modelMapper.map(owner, OwnerDTO.class);
-    }
+        return modelMapper.map(owner, OwnerDTO.class);}
+
 
     @Transactional
-    public OwnerDTO addExistingDogToOwner(int id, UpdateWithExistingDogCommand command) {
-        Dog dog = dogRepository.findById(command.getId()).orElseThrow(() -> new NotFoundException(command.getId()));
-        Owner owner = ownerRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+    public OwnerDTO addExistingDogToExistingOwner(int id, AddExistingDogCommand command) {
+        Dog dog = dogRepository.findById(command.getId()).orElseThrow(() -> new NotFoundException(command.getId(), "Dog"));
+        Owner owner = findOwner(id);
         dog.setOwner(owner);
         owner.addDog(dog);
-        return modelMapper.map(owner, OwnerDTO.class);
-    }
+        return modelMapper.map(owner, OwnerDTO.class);}
+
+
+    @Transactional
+    public OwnerDTO updateOwner(int id, UpdateOwnerCommand command) {
+        Owner owner = findOwner(id);
+        owner.setName(command.getName());
+        Owner result = ownerRepository.save(owner);
+        return modelMapper.map(result, OwnerDTO.class);}
+
 
     public void deleteOwnerById(int id) {
         if (ownerRepository.existsById(id)) {
             ownerRepository.deleteById(id);
         } else {
-            throw new NotFoundException(id);
-        }
-    }
+            throw new NotFoundException(id, "Owner");}}
+
 
     public void deleteAllOwners() {
         ownerRepository.deleteAll();
-    }
-}
+    }}

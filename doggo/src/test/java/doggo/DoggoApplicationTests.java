@@ -7,6 +7,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 class DoggoApplicationTests {
 
     @Test
-    void contextLoads() {
-    }
-}
+    void contextLoads() {}}

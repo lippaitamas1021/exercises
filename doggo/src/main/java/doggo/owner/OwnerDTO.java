@@ -1,10 +1,8 @@
 package doggo.owner;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import doggo.dog.DogDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.util.ArrayList;
+import lombok.*;
 import java.util.List;
 
 @Data
@@ -16,5 +14,5 @@ public class OwnerDTO {
 
     private String name;
 
-    private List<DogDTO> dogs = new ArrayList<>();
-}
+    @JsonBackReference
+    private List<DogDTO> dogs;}

@@ -1,14 +1,16 @@
 package doggo.dog;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import doggo.owner.Owner;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "dogs")
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Dog {
@@ -23,16 +25,30 @@ public class Dog {
 
     private int age;
 
-    @ManyToOne(targetEntity = Owner.class)
-    @JoinColumn(name = "dog_id")
-    private Owner owner;
-
     @Column(name = "fav_toy")
     private String favToy;
 
-    public Dog(String name, String breed, int age) {
+    @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
+    private Owner owner;
+
+    public Dog(String name, String breed, int age, String favToy) {
         this.name = name;
         this.breed = breed;
         this.age = age;
-    }
-}
+        this.favToy = favToy;}
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Dog dog = (Dog) o;
+        return Objects.equals(id, dog.id);}
+
+
+    @Override
+    public int hashCode() {
+        return 1216366848;}}

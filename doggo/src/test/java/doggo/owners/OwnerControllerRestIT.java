@@ -1,5 +1,6 @@
 package doggo.owners;
 
+import doggo.dog.AddNewDogCommand;
 import doggo.dog.CreateDogCommand;
 import doggo.dog.DogDTO;
 import doggo.owner.CreateOwnerCommand;
@@ -20,12 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(statements = {"delete from owners"})
-@Sql(statements = {"delete from dogs"})
+@Sql(statements = {"delete from dog", "delete from owner"})
 public class OwnerControllerRestIT {
 
     @Autowired
     TestRestTemplate template;
+
 
     @Test
     void testCreateNewOwner(){
@@ -56,14 +57,12 @@ public class OwnerControllerRestIT {
     void testAddNewDogToExistingOwner(){
         OwnerDTO owner =
                 template.postForObject("/api/owners",
-                        new CreateOwnerCommand("Lindsey Lohan"),
+                        new CreateOwnerCommand("Mila Kunis"),
                         OwnerDTO.class);
         OwnerDTO ownerWithDog = template.postForObject("/api/owners/{id}/dogs",
-                new CreateDogCommand("Lili", "Mopps", 2),
-                OwnerDTO.class,
-                owner.getId());
+                new AddNewDogCommand("Lili", "Mopps", 2, "Frisby"), OwnerDTO.class, owner.getId());
         assertThat(ownerWithDog.getDogs()).extracting(DogDTO::getName)
-                .containsExactly("Lili");}
+                .contains("Lili");}
 
 
     @Test
@@ -74,7 +73,7 @@ public class OwnerControllerRestIT {
                         OwnerDTO.class);
         DogDTO dog =
                 template.postForObject("/api/dogs",
-                        new CreateDogCommand("Lili","Mopps", 2),
+                        new CreateDogCommand("Lili","Mopps", 2, "Ball"),
                         DogDTO.class);
         template.put("/api/owners/{id}/dogs", new UpdateWithExistingDogCommand(dog.getId()), owner.getId());
         List<OwnerDTO> result = template.exchange(
@@ -82,18 +81,19 @@ public class OwnerControllerRestIT {
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<OwnerDTO>>() {}).getBody();
+        assert result != null;
         assertThat(result.get(0).getDogs()).extracting(DogDTO::getName)
-                .containsExactly("Lili");}
+                .contains("Lili");}
 
 
     @Test
     void testAddDogToNotExistingOwner(){
         int id = 212;
         Problem result = template.postForObject("/api/owners/{id}/dogs",
-                new CreateDogCommand("Lili", "Mopps", 2),
+                new CreateDogCommand("Lili", "Mopps", 2, "Frisby"),
                 Problem.class,
                 id);
-        assertEquals(URI.create("not-found"),result.getType());
+        assertEquals(URI.create("Owner/not-found"),result.getType());
         assertEquals(Status.NOT_FOUND,result.getStatus());}
 
 
@@ -103,5 +103,4 @@ public class OwnerControllerRestIT {
                 template.postForObject("/api/owners",
                         new CreateOwnerCommand(""),
                         Problem.class);
-        assertEquals(Status.BAD_REQUEST,result.getStatus());}
-}
+        assertEquals(Status.BAD_REQUEST,result.getStatus());}}

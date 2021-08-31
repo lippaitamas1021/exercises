@@ -1,13 +1,22 @@
-PUT http://localhost:8080/api/owners/1/dogs
+PUT http://localhost:8080/api/owners/6
 Content-Type: application/json
 
 {
-  "id": 1
+  "name": "Anne Hathawy"
 }
 
 ###
 
-POST http://localhost:8080/api/owners/1/dogs
+PUT http://localhost:8080/api/owners/6/dogs
+Content-Type: application/json
+
+{
+  "id": 7
+}
+
+###
+
+POST http://localhost:8080/api/owners/6/dogs
 Content-Type: application/json
 
 {
@@ -22,12 +31,12 @@ POST http://localhost:8080/api/owners
 Content-Type: application/json
 
 {
-  "name": "Nagy Annamária"
+  "name": "Margot Robbie"
 }
 
 ###
 
-GET http://localhost:8080/api/owners/1
+GET http://localhost:8080/api/owners/4
 Accept: application/json
 
 ###
@@ -41,4 +50,4 @@ DELETE http://localhost:8080/api/owners
 
 ###
 
-DELETE http://localhost:8080/api/owners/1
+DELETE http://localhost:8080/api/owners/5

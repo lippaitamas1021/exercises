@@ -2,6 +2,7 @@ package doggo.dogs;
 
 import doggo.dog.CreateDogCommand;
 import doggo.dog.DogDTO;
+import doggo.owner.Owner;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,17 +17,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(statements = {"delete from dogs"})
+@Sql(statements = {"delete from dog"})
 public class DogControllerRestIT {
 
     @Autowired
     TestRestTemplate template;
 
+
     @Test
     void testAddNewDog(){
         DogDTO dog =
                 template.postForObject("/api/dogs",
-                        new CreateDogCommand("Ronnie", "BullDog", 3),
+                        new CreateDogCommand("Ronnie", "BullDog", 3, "Ball"),
                         DogDTO.class);
         assertEquals("Ronnie",dog.getName());
         assertEquals(3,dog.getAge());
@@ -36,10 +38,10 @@ public class DogControllerRestIT {
     @Test
     void testGetDogs(){
         template.postForObject("/api/dogs",
-                new CreateDogCommand("Lili", "Mopps", 2),
+                new CreateDogCommand("Lili", "Mopps", 2, "Frisby"),
                 DogDTO.class);
         template.postForObject("/api/dogs",
-                new CreateDogCommand("Ronnie", "BullDog", 3),
+                new CreateDogCommand("Ronnie", "BullDog", 3, "Ball"),
                 DogDTO.class);
         List<DogDTO> result = template.exchange(
                 "/api/dogs",
@@ -53,7 +55,7 @@ public class DogControllerRestIT {
     @Test
     void deleteDogById(){
         DogDTO result =template.postForObject("/api/dogs",
-                new CreateDogCommand("Ronnie", "BullDog", 3),
+                new CreateDogCommand("Ronnie", "BullDog", 3, "Postman"),
                 DogDTO.class);
         template.delete("/api/dogs/{id}", result.getId());
         List<DogDTO> players = template.exchange(
@@ -68,7 +70,6 @@ public class DogControllerRestIT {
     void testCreateDogWithInvalidName(){
         Problem result =
                 template.postForObject("/api/dogs",
-                        new CreateDogCommand("", "BullDog", 3),
+                        new CreateDogCommand("", "BullDog", 3, "Frisby"),
                         Problem.class);
-        assertEquals(Status.BAD_REQUEST,result.getStatus());}
-}
+        assertEquals(Status.BAD_REQUEST,result.getStatus());}}
