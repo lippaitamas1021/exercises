@@ -15,5 +15,4 @@ public class MovieDTO {
 
     private String director;
 
-    private String studio;
-}
+    private String studio;}

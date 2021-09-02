@@ -24,24 +24,23 @@ public class BookService {
 
 
     public BookDTO findBookById(int id) {
-        Book book = bookRepository.findById(id).orElseThrow(()-> new NotFoundException(id, "Book"));
-        return modelMapper.map(book, BookDTO.class);}
+        return modelMapper.map(findBook(id), BookDTO.class);}
+
+
+    public Book findBook(int id) {
+        return bookRepository.findById(id).orElseThrow(()-> new NotFoundException(id, "Book"));}
 
 
     public BookDTO saveBook(CreateBookCommand command) {
-        Book book = new Book(command.getAuthor(), command.getTitle(), command.getDate());
-        bookRepository.save(book);
+        Book book = bookRepository.save(new Book(command.getAuthor(), command.getTitle()));
         return modelMapper.map(book, BookDTO.class);}
 
 
     @Transactional
     public BookDTO updateBook(int id, UpdateBookCommand command) {
-        Book book = bookRepository.findById(id).orElseThrow(()-> new NotFoundException(id, "Book"));
-        book.setId(command.getId());
+        Book book = findBook(id);
         book.setAuthor(command.getAuthor());
         book.setTitle(command.getTitle());
-        book.setDate(command.getDate());
-        bookRepository.save(book);
         return modelMapper.map(book, BookDTO.class);}
 
 

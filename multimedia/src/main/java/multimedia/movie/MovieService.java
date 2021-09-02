@@ -24,23 +24,23 @@ public class MovieService {
 
 
     public MovieDTO findMovieById(int id) {
-        Movie movie = movieRepository.findById(id).orElseThrow(()-> new NotFoundException(id, "Movie"));
-        return modelMapper.map(movie, MovieDTO.class);}
+        return modelMapper.map(findMovie(id), MovieDTO.class);}
+
+
+    public Movie findMovie(int id) {
+        return movieRepository.findById(id).orElseThrow(()-> new NotFoundException(id, "Movie"));}
 
 
     public MovieDTO saveMovie(CreateMovieCommand command) {
-        Movie movie = new Movie(command.getTitle(), command.getDirector(), command.getStudio());
-        movieRepository.save(movie);
+        Movie movie = movieRepository.save(new Movie(command.getTitle(), command.getDirector()));
         return modelMapper.map(movie, MovieDTO.class);}
 
 
     @Transactional
     public MovieDTO updateMovie(int id, UpdateMovieCommand command) {
-        Movie movie = movieRepository.findById(id).orElseThrow(()-> new NotFoundException(id, "Movie"));
+        Movie movie = findMovie(id);
         movie.setTitle(command.getTitle());
         movie.setDirector(command.getDirector());
-        movie.setStudio(command.getStudio());
-        movieRepository.save(movie);
         return modelMapper.map(movie, MovieDTO.class);}
 
 

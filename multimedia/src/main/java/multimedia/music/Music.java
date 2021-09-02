@@ -1,13 +1,14 @@
 package multimedia.music;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "music")
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Music {
@@ -22,7 +23,22 @@ public class Music {
 
     private String genre;
 
+
     public Music(String performer, String title, String genre) {
         this.performer = performer;
         this.title = title;
-        this.genre = genre;}}
+        this.genre = genre;}
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Music music = (Music) o;
+
+        return Objects.equals(id, music.id);}
+
+
+    @Override
+    public int hashCode() {
+        return 1086698890;}}

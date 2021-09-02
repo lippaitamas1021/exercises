@@ -47,32 +47,23 @@ public class MusicControllerRestIT {
 
 
     @Test
-    void testGetMusicById(){
-        MusicDTO music = template.postForObject("/api/music",
-                new CreateMusicCommand("Kiesza", "Hideaway", "Pop"),
-                MusicDTO.class);
-        List<MusicDTO> result = template.exchange(
-                "/api/music/" + music.getId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<MusicDTO>>(){}).getBody();
-        assert result != null;
-        assertEquals("Kiesza", result.get(0).getPerformer());}
-
-
-    @Test
     void testUpdateMusic() {
-        MusicDTO music = template.postForObject("/api/music",
+        MusicDTO music1 = template.postForObject("/api/music",
                 new CreateMusicCommand("Kiesza", "Hideaway", "Pop"),
                 MusicDTO.class);
-        template.put("/api/music/{id}", new UpdateMusicCommand("Appearance"), music.getId());
+        MusicDTO music2 = template.postForObject("/api/music",
+                new CreateMusicCommand("Depeche Mode", "I feel you", "Pop"),
+                MusicDTO.class);
+        template.put("/api/music/{id}", new UpdateMusicCommand("Kiesza", "Over myself", "Pop"), music1.getId());
+        template.put("/api/music/{id}", new UpdateMusicCommand("Depeche Mode", "Precious", "Pop"), music2.getId());
         List<MusicDTO> result = template.exchange(
                 "/api/music",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<MusicDTO>>(){}).getBody();
         assert result != null;
-        assertEquals("Appearance", result.get(0).getTitle());}
+        assertEquals("Over myself", result.get(0).getTitle());
+        assertEquals("Precious", result.get(1).getTitle());}
 
 
     @Test

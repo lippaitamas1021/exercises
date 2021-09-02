@@ -1,25 +1,20 @@
 package multimedia.book;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateBookCommand {
 
-    private int id;
-
+    @NotBlank(message = "Author of the book must be given")
+    @Schema(description = "Author of the book", example = "Gárdonyi Géza")
     private String author;
 
     @NotBlank(message = "Title of the book must be completed")
-    private String title;
-
-    private LocalDate date;
-
-    public UpdateBookCommand(String title) {
-        this.title = title;}}
+    @Schema(description = "Title of the book", example = "Egri csillagok")
+    private String title;}

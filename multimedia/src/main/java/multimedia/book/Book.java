@@ -1,14 +1,14 @@
 package multimedia.book;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
-@Table(name = "books")
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
@@ -21,10 +21,23 @@ public class Book {
 
     private String title;
 
-    private LocalDate date;
+    private String date;
 
 
-    public Book(String author, String title, LocalDate date) {
+    public Book(String author, String title) {
         this.author = author;
-        this.title = title;
-        this.date = date;}}
+        this.title = title;}
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Book book = (Book) o;
+
+        return Objects.equals(id, book.id);}
+
+
+    @Override
+    public int hashCode() {
+        return 967762358;}}

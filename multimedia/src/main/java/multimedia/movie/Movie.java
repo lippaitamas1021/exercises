@@ -1,13 +1,14 @@
 package multimedia.movie;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "movies")
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Movie {
@@ -22,7 +23,21 @@ public class Movie {
 
     private String studio;
 
-    public Movie(String title, String director, String studio) {
+
+    public Movie(String title, String director) {
         this.title = title;
-        this.director = director;
-        this.studio = studio;}}
+        this.director = director;}
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Movie movie = (Movie) o;
+
+        return Objects.equals(id, movie.id);}
+
+
+    @Override
+    public int hashCode() {
+        return 693411677;}}

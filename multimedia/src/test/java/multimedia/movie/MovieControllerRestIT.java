@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(statements = "delete from movies")
+@Sql(statements = "delete from movie")
 public class MovieControllerRestIT {
 
     @Autowired
@@ -24,7 +24,7 @@ public class MovieControllerRestIT {
     @Test
     void testCreateNewMovie(){
         MovieDTO result = template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter"),
                 MovieDTO.class);
         assertEquals("Üvegtigris1",result.getTitle());}
 
@@ -32,10 +32,10 @@ public class MovieControllerRestIT {
     @Test
     void testGetMovies(){
         template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter"),
                 MovieDTO.class);
         template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris2", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("Üvegtigris2", "Rudolf Péter"),
                 MovieDTO.class);
         List<MovieDTO> result = template.exchange(
                 "/api/movies",
@@ -47,25 +47,11 @@ public class MovieControllerRestIT {
 
 
     @Test
-    void testGetMovieById(){
-        MovieDTO movie = template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter", "FilmArt"),
-                MovieDTO.class);
-        List<MovieDTO> result = template.exchange(
-                "/api/movies/" + movie.getId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<MovieDTO>>(){}).getBody();
-        assert result != null;
-        assertEquals("FilmArt", result.get(0).getStudio());}
-
-
-    @Test
     void testUpdateMovie() {
         MovieDTO movie = template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter"),
                 MovieDTO.class);
-        template.put("/api/movies/{id}", new UpdateMovieCommand("Fapuma"), movie.getId());
+        template.put("/api/movies/{id}", new UpdateMovieCommand("Fapuma", "Kapitány Iván"), movie.getId());
         List<MovieDTO> result = template.exchange(
                 "/api/movies",
                 HttpMethod.GET,
@@ -78,7 +64,7 @@ public class MovieControllerRestIT {
     @Test
     void testCreateMovieWithInvalidTitle(){
         Problem result = template.postForObject("/api/movies",
-                new CreateMovieCommand("", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("", "Rudolf Péter"),
                 Problem.class);
         assertEquals(Status.BAD_REQUEST,result.getStatus());}
 
@@ -86,7 +72,7 @@ public class MovieControllerRestIT {
     @Test
     void testDeleteMovieById() {
         MovieDTO movie = template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter"),
                 MovieDTO.class);
         template.delete("/api/movies/{id}", movie.getId());
         List<MovieDTO> movies = template.exchange(
@@ -100,10 +86,10 @@ public class MovieControllerRestIT {
     @Test
     void deleteAllTheMovies() {
         template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("Üvegtigris1", "Rudolf Péter"),
                 MovieDTO.class);
         template.postForObject("/api/movies",
-                new CreateMovieCommand("Üvegtigris2", "Rudolf Péter", "FilmArt"),
+                new CreateMovieCommand("Üvegtigris2", "Rudolf Péter"),
                 MovieDTO.class);
         template.delete("/api/movies");
         List<MovieDTO> movies = template.exchange(

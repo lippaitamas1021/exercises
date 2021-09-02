@@ -9,13 +9,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.context.jdbc.Sql;
 import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
-import java.time.LocalDate;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(statements = "delete from books")
+@Sql(statements = "delete from book")
 public class BookControllerRestIT {
 
     @Autowired
@@ -25,7 +24,7 @@ public class BookControllerRestIT {
     @Test
     void testCreateNewBook(){
         BookDTO result = template.postForObject("/api/books",
-                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok", LocalDate.of(1950,11,11)),
+                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok"),
                 BookDTO.class);
         assertEquals("Egri csillagok",result.getTitle());}
 
@@ -33,10 +32,10 @@ public class BookControllerRestIT {
     @Test
     void testGetBooks(){
         template.postForObject("/api/books",
-                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok", LocalDate.of(1950,11,11)),
+                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok"),
                 BookDTO.class);
         template.postForObject("/api/books",
-                new CreateBookCommand("Dan Brown", "Da Vinci kód", LocalDate.of(2005,10,10)),
+                new CreateBookCommand("Dan Brown", "Da Vinci kód"),
                 BookDTO.class);
         List<BookDTO> result = template.exchange(
                 "/api/books",
@@ -48,29 +47,15 @@ public class BookControllerRestIT {
 
 
     @Test
-    void testGetBookById(){
-        BookDTO book = template.postForObject("/api/books",
-                new CreateBookCommand("Dan Brown", "Da Vinci kód", LocalDate.of(2005,10,10)),
-                BookDTO.class);
-        List<BookDTO> result = template.exchange(
-                "/api/books/" + book.getId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<BookDTO>>(){}).getBody();
-        assert result != null;
-        assertEquals("Da Vinci kód", result.get(0).getTitle());}
-
-
-    @Test
     void testUpdateBook() {
         BookDTO book1 = template.postForObject("/api/books",
-                new CreateBookCommand("Dan Brown", "Da Vinci kód", LocalDate.of(2005,10,10)),
+                new CreateBookCommand("Dan Brown", "Da Vinci kód"),
                 BookDTO.class);
         BookDTO book2 = template.postForObject("/api/books",
-                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok", LocalDate.of(1950,11,11)),
+                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok"),
                 BookDTO.class);
-        template.put("/api/books/{id}", new UpdateBookCommand("Da Vinci kód 2"), book1.getId());
-        template.put("/api/books/{id}", new UpdateBookCommand("Egri pillangók"), book2.getId());
+        template.put("/api/books/{id}", new UpdateBookCommand("Danny Brown", "Da Vinci kód 2"), book1.getId());
+        template.put("/api/books/{id}", new UpdateBookCommand("Gárdonyi Gedeon","Egri pillangók"), book2.getId());
         List<BookDTO> result = template.exchange(
                 "/api/books",
                 HttpMethod.GET,
@@ -85,7 +70,7 @@ public class BookControllerRestIT {
     void testCreateBookWithInvalidTitle(){
         Problem result =
                 template.postForObject("/api/books",
-                        new CreateBookCommand("Dan Brown", "", LocalDate.of(2005,10,10)),
+                        new CreateBookCommand("Dan Brown", ""),
                         Problem.class);
         assertEquals(Status.BAD_REQUEST,result.getStatus());}
 
@@ -93,7 +78,7 @@ public class BookControllerRestIT {
     @Test
     void testDeleteBookById() {
         BookDTO book = template.postForObject("/api/books",
-                new CreateBookCommand("Dan Brown", "Da Vinci kód", LocalDate.of(2005,10,10)),
+                new CreateBookCommand("Dan Brown", "Da Vinci kód"),
                 BookDTO.class);
         template.delete("/api/books/{id}", book.getId());
         List<BookDTO> books = template.exchange(
@@ -105,12 +90,12 @@ public class BookControllerRestIT {
 
 
     @Test
-    void deleteAllTheBooks() {
+    void testDeleteAllTheBooks() {
         template.postForObject("/api/books",
-                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok", LocalDate.of(1950,11,11)),
+                new CreateBookCommand("Gárdonyi Géza", "Egri csillagok"),
                 BookDTO.class);
         template.postForObject("/api/books",
-                new CreateBookCommand("Dan Brown", "Da Vinci kód", LocalDate.of(2005,10,10)),
+                new CreateBookCommand("Dan Brown", "Da Vinci kód"),
                 BookDTO.class);
         template.delete("/api/books");
         List<BookDTO> books = template.exchange(
