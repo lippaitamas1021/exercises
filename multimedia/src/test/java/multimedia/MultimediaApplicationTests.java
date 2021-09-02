@@ -7,7 +7,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 class MultimediaApplicationTests {
 
     @Test
-    void contextLoads() {
-    }
-
-}
+    void contextLoads() {}}
